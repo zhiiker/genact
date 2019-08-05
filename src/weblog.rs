@@ -1,11 +1,16 @@
 /// Module that pretends to tail a web server log.
 use rand::prelude::*;
+use chrono::prelude::*;
+use fake::{Faker, Fake};
+use fake::faker::internet;
+use fake::faker::lorem::en::*;
+use std::net::Ipv4Addr;
 
 use crate::parse_args::AppConfig;
-use chrono::prelude::*;
+use crate::utils::{csleep, dprint, gen_file_path};
 use crate::EXTENSIONS_LIST;
 use crate::PACKAGES_LIST;
-use crate::utils::{csleep, dprint, gen_file_path};
+
 static HTTP_CODES: &'static [u16] = &[200, 201, 400, 401, 403, 404, 500, 502, 503];
 
 pub fn run(appconfig: &AppConfig) {
@@ -16,7 +21,7 @@ pub fn run(appconfig: &AppConfig) {
 
     for _ in 1..num_lines {
         let ip = if rng.gen_bool(0.5) {
-            fake!(Internet.ipv4)
+            Faker.fake::<Ipv4Addr>().to_lowercase();
         } else {
             fake!(Internet.ipv6).to_lowercase()
         };
